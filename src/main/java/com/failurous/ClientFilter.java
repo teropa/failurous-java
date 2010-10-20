@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,25 +23,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 public class ClientFilter implements Filter {
 	
+	private final HttpClient httpClient = new HttpClient(new MultiThreadedHttpConnectionManager());
 	private String endpointUrl;
-	private HttpClient httpClient = new HttpClient(new MultiThreadedHttpConnectionManager());
 	
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 		try {
 			chain.doFilter(req, res);
 		} catch (IOException e) {
-			System.out.println("caught");
 			sendReport(e, req);
 			throw e;
 		} catch (ServletException e) {
-			System.out.println("caught");
 			sendReport(e, req);
 			throw e;			
 		} catch (RuntimeException e) {
-			System.out.println("caught");
 			sendReport(e, req);
 			throw e;
 		}
@@ -50,27 +45,17 @@ public class ClientFilter implements Filter {
 	
 	private void sendReport(Throwable t, ServletRequest request) {
 		OutputStream out = null;
+		PostMethod post = null;
 		try {
-			PostMethod post = new PostMethod(endpointUrl);
+			post = new PostMethod(endpointUrl);
 			NameValuePair pair = new NameValuePair("data", constructReport(t, (HttpServletRequest)request));
 			post.setRequestBody(new NameValuePair[] { pair });
-			try {
-				httpClient.executeMethod(post);
-				System.out.println("sent");
-			} finally {
-				post.releaseConnection();
-			}
-		} catch (MalformedURLException e) {
-			throw new FailurousException(e);
+			httpClient.executeMethod(post);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		} finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException ioe) {
-				}
-			}
+			post.releaseConnection();
+			safeClose(out);
 		}
 	}
 
@@ -78,6 +63,7 @@ public class ClientFilter implements Filter {
 		try {
 			JSONObject report = new JSONObject();
 			report.put("title", t.getMessage());
+			report.put("location", t.getStackTrace()[0].toString());
 			
 			JSONArray data = new JSONArray();
 			data.put(getSummary(t, request));
@@ -99,7 +85,6 @@ public class ClientFilter implements Filter {
 		JSONArray summaryContent = new JSONArray();
 		summaryContent.put(constructField("type", t.getClass().getCanonicalName(), "use_in_checksum", "true"));
 		summaryContent.put(constructField("message", t.getMessage()));
-		summaryContent.put(constructField("location", t.getStackTrace()[0].toString(), "use_in_checksum", "true"));
 		summaryContent.put(constructField("request_url", request.getRequestURL().toString()));
 		summary.put(summaryContent);
 		return summary;
@@ -178,7 +163,15 @@ public class ClientFilter implements Filter {
 		
 		this.endpointUrl = serverAddress + "api/projects/" + apiKey + "/fails";
 	}
-	
+
+	private void safeClose(OutputStream out) {
+		if (out == null) return;
+		try {
+			out.close();
+		} catch (IOException ioe) {
+		}
+	}
+
 	public void destroy() {		
 	}
 	
