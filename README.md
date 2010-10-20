@@ -49,6 +49,9 @@ The filter will automatically catch any exceptions your app threw and deliver th
 
 Notice that the position of the filter-mapping element affects which exceptions Failurous will report. Any filter mappings appearing before the failurous filter mapping in web.xml will not be reported, since they are executed outside its scope.
 
+## Support & Bug Reports
+
+[Failurous-java Lighthouse](http://failurous.lighthouseapp.com/projects/62311-failurous-java)
 
 ## License
 
