@@ -19,6 +19,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,8 +50,9 @@ public class ClientFilter implements Filter {
 		PostMethod post = null;
 		try {
 			post = new PostMethod(endpointUrl);
-			NameValuePair pair = new NameValuePair("data", constructReport(t, (HttpServletRequest)request));
-			post.setRequestBody(new NameValuePair[] { pair });
+			String report = constructReport(t, (HttpServletRequest)request);
+			RequestEntity entity = new StringRequestEntity(report, "application/json", "UTF-8");
+			post.setRequestEntity(entity);
 			httpClient.executeMethod(post);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
