@@ -20,8 +20,8 @@ To integrate Failurous to a Java webapp, first add the Failurous Maven repositor
 Next, add a dependency to the Failurous Java client:
 
     <dependency>
-      <groupId>failurous</groupId>
-      <artifactId>javaclient</artifactId>
+      <groupId>com.failurous</groupId>
+      <artifactId>failurous-java</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
 		
@@ -29,7 +29,7 @@ Finally, configure the Failurous Java client to intercept exceptions by adding i
 
 	<filter>
 		<filter-name>failurous</filter-name>
-		<filter-class>failurous.ClientFilter</filter-class>
+		<filter-class>com.failurous.ClientFilter</filter-class>
 		<init-param>
 			<param-name>serverAddress</param-name>
 			<param-value><FAILUROUS-INSTALLATION></param-value>

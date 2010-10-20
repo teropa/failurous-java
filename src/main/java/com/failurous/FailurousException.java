@@ -1,4 +1,4 @@
-package failurous;
+package com.failurous;
 
 
 @SuppressWarnings("serial")

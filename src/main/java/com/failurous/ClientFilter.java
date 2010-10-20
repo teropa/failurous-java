@@ -1,4 +1,4 @@
-package failurous;
+package com.failurous;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,6 +23,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 public class ClientFilter implements Filter {
 	
