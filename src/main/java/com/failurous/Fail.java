@@ -3,20 +3,20 @@ package com.failurous;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FailNotification {
+public class Fail {
 
 	private String title;
 	private String location;
 	private boolean useTitleInChecksum = false;
 	private boolean useLocationInChecksum = true;
-	private List<FailNotificationSection> data = new ArrayList<FailNotificationSection>();
+	private List<FailSection> data = new ArrayList<FailSection>();
 
-	public FailNotification(String title, String location) {
+	public Fail(String title, String location) {
 		this.title = title;
 		this.location = location;
 	}
 	
-	public void addSection(FailNotificationSection section) {
+	public void addSection(FailSection section) {
 		data.add(section);
 	}
 	
@@ -44,7 +44,7 @@ public class FailNotification {
 		this.useLocationInChecksum = useLocationInChecksum;
 	}
 
-	public List<FailNotificationSection> getData() {
+	public List<FailSection> getData() {
 		return data;
 	}
 	

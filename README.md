@@ -35,7 +35,7 @@ and set its contents to:
     serverAddress = <YOUR-FAILUROUS-INSTALLATION>
     apiKey = <API-FAILUROUS-PROJECT-API-KEY>
     
-### 3. Catching exceptions occurring in web requests
+## Catching exceptions occurring in web requests
     
 Finally, configure the Failurous Java client to intercept exceptions by adding it as a servlet filter to your web.xml:
 
@@ -53,7 +53,16 @@ The filter will automatically catch any exceptions your app threw and deliver th
 
 Notice that the position of the filter-mapping element affects which exceptions Failurous will report. Any filter mappings appearing before the failurous filter mapping in web.xml will not be reported, since they are executed outside its scope.
 
+## Sending custom notifications
+
+failurous-java can be used to send custom notifications to Failurous. This can be accomplished by building an instance of `Fail` and sending it with the `FailSender` API:
+
+FailSender sender = FailSenderFactory.getSender();
+sender.send(new Fail("50 invalid login attempts by "+loginName, "LoginService.login()"));
+
 ## Support & Bug Reports
+
+#failurous at Freenode
 
 [Failurous-java Lighthouse](http://failurous.lighthouseapp.com/projects/62311-failurous-java)
 

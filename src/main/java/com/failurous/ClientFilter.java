@@ -34,11 +34,11 @@ public class ClientFilter implements Filter {
 	
 	private void sendReport(Throwable t, ServletRequest request) {
 		FailSender sender = FailSenderFactory.getSender();
-		sender.sendReport(constructReport(t, (HttpServletRequest)request));
+		sender.send(constructReport(t, (HttpServletRequest)request));
 	}
 
-	private FailNotification constructReport(Throwable t, HttpServletRequest request) {
-		FailNotification report = new FailNotification(t.getMessage(), t.getStackTrace()[0].toString());
+	private Fail constructReport(Throwable t, HttpServletRequest request) {
+		Fail report = new Fail(t.getMessage(), t.getStackTrace()[0].toString());
 		report.addSection(getSummary(t, request));
 		report.addSection(getDetails(t));
 		report.addSection(getRequestInfo(request));
@@ -46,22 +46,22 @@ public class ClientFilter implements Filter {
 		return report;
 	}
 
-	private FailNotificationSection getSummary(Throwable t, HttpServletRequest request) {
-		FailNotificationSection summary = new FailNotificationSection("summary");
+	private FailSection getSummary(Throwable t, HttpServletRequest request) {
+		FailSection summary = new FailSection("summary");
 		summary.addField(constructField("type", t.getClass().getCanonicalName(), "use_in_checksum", "true"));
 		summary.addField(constructField("message", t.getMessage()));
 		summary.addField(constructField("request_url", request.getRequestURL().toString()));
 		return summary;
 	}
 
-	private FailNotificationSection getDetails(Throwable t) {
-		FailNotificationSection details = new FailNotificationSection("details");
+	private FailSection getDetails(Throwable t) {
+		FailSection details = new FailSection("details");
 		details.addField(constructField("stacktrace", getStackTraceString(t)));
 		return details;
 	}
 
-	private FailNotificationSection getRequestInfo(HttpServletRequest request) {
-		FailNotificationSection requestInfo = new FailNotificationSection("request");
+	private FailSection getRequestInfo(HttpServletRequest request) {
+		FailSection requestInfo = new FailSection("request");
 		requestInfo.addField(constructField("url", request.getRequestURL().toString()));
 		requestInfo.addField(constructField("remote_address", request.getRemoteAddr()));
 		for (String header : stringList(request.getHeaderNames())) {
@@ -70,8 +70,8 @@ public class ClientFilter implements Filter {
 		return requestInfo;
 	}
 	
-	private FailNotificationSection getSessionInfo(HttpServletRequest request) {
-		FailNotificationSection session = new FailNotificationSection("session");
+	private FailSection getSessionInfo(HttpServletRequest request) {
+		FailSection session = new FailSection("session");
 		if (request.getSession(false) != null) {
 			for (String key : stringList(request.getSession().getAttributeNames())) {
 				Object value = request.getSession().getAttribute(key);
@@ -81,8 +81,8 @@ public class ClientFilter implements Filter {
 		return session;
 	}	
 
-	private FailNotificationField constructField(String name, String value, String... options) {
-		FailNotificationField field = new FailNotificationField(name, value);
+	private FailField constructField(String name, String value, String... options) {
+		FailField field = new FailField(name, value);
 		for (int i=0 ; i<options.length ; i += 2) {
 			field.setOption(options[i], options[i+1]);
 		}		

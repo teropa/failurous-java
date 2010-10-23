@@ -18,7 +18,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class FailSender {
 
-	private final BlockingQueue<FailNotification> failQueue = new LinkedBlockingQueue<FailNotification>();
+	private final BlockingQueue<Fail> failQueue = new LinkedBlockingQueue<Fail>();
 	private final ObjectMapper failMapper = new ObjectMapper();
 	private final Executor senderExecutor = Executors.newSingleThreadExecutor(new DaemonThreadFactory());
 	
@@ -37,11 +37,11 @@ public class FailSender {
 		return serverAddress;
 	}
 	
-	public void sendReport(FailNotification fail) {
+	public void send(Fail fail) {
 		try {
 			failQueue.put(fail);
 		} catch (InterruptedException ie) {
-			sendReport(fail);
+			send(fail);
 		}
 	}
 	
@@ -57,7 +57,7 @@ public class FailSender {
 		public void run() {
 			while (true) {
 				try {
-					List<FailNotification> batch = new ArrayList<FailNotification>();
+					List<Fail> batch = new ArrayList<Fail>();
 					batch.add(failQueue.take());
 					failQueue.drainTo(batch);
 					send(batch);
@@ -68,7 +68,7 @@ public class FailSender {
 			}
 		}
 		
-		private void send(List<FailNotification> fails) {
+		private void send(List<Fail> fails) {
 			try {
 				String serialized = failMapper.writeValueAsString(fails);
 				StringEntity entity = new StringEntity(serialized);
