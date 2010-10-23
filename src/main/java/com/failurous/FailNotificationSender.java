@@ -16,21 +16,21 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.map.ObjectMapper;
 
-public class ReportSender {
+public class FailNotificationSender {
 
-	private final BlockingQueue<Report> reportQueue = new LinkedBlockingQueue<Report>();
-	private final ObjectMapper reportMapper = new ObjectMapper();
+	private final BlockingQueue<FailNotification> failQueue = new LinkedBlockingQueue<FailNotification>();
+	private final ObjectMapper failMapper = new ObjectMapper();
 	private final Executor senderExecutor = Executors.newFixedThreadPool(1, new DaemonThreadFactory());
 	
-	public ReportSender(String endpointUrl) {
+	public FailNotificationSender(String endpointUrl) {
 		senderExecutor.execute(new Sender(endpointUrl));
 	}
 	
-	public void sendReport(Report report) {
+	public void sendReport(FailNotification fail) {
 		try {
-			reportQueue.put(report);
+			failQueue.put(fail);
 		} catch (InterruptedException ie) {
-			sendReport(report);
+			sendReport(fail);
 		}
 	}
 	
@@ -46,9 +46,9 @@ public class ReportSender {
 		public void run() {
 			while (true) {
 				try {
-					List<Report> batch = new ArrayList<Report>();
-					batch.add(reportQueue.take());
-					reportQueue.drainTo(batch);
+					List<FailNotification> batch = new ArrayList<FailNotification>();
+					batch.add(failQueue.take());
+					failQueue.drainTo(batch);
 					send(batch);
 				} catch (InterruptedException ie) {
 				} catch (Throwable t) {
@@ -57,9 +57,9 @@ public class ReportSender {
 			}
 		}
 		
-		private void send(List<Report> reports) {
+		private void send(List<FailNotification> fails) {
 			try {
-				String serialized = reportMapper.writeValueAsString(reports);
+				String serialized = failMapper.writeValueAsString(fails);
 				StringEntity entity = new StringEntity(serialized);
 				entity.setContentType("application/json");
 				
@@ -78,6 +78,7 @@ public class ReportSender {
 	private class DaemonThreadFactory implements ThreadFactory {
 		public Thread newThread(Runnable r) {
 			Thread thread = new Thread(r);
+			thread.setName("failurous");
 			thread.setDaemon(true);
 			return thread;
 		}

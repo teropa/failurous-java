@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class ClientFilter implements Filter {
 	
-	private ReportSender sender;
+	private FailNotificationSender sender;
 	
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 		try {
@@ -38,8 +38,8 @@ public class ClientFilter implements Filter {
 		sender.sendReport(constructReport(t, (HttpServletRequest)request));
 	}
 
-	private Report constructReport(Throwable t, HttpServletRequest request) {
-		Report report = new Report(t.getMessage(), t.getStackTrace()[0].toString());
+	private FailNotification constructReport(Throwable t, HttpServletRequest request) {
+		FailNotification report = new FailNotification(t.getMessage(), t.getStackTrace()[0].toString());
 		report.addSection(getSummary(t, request));
 		report.addSection(getDetails(t));
 		report.addSection(getRequestInfo(request));
@@ -47,22 +47,22 @@ public class ClientFilter implements Filter {
 		return report;
 	}
 
-	private ReportSection getSummary(Throwable t, HttpServletRequest request) {
-		ReportSection summary = new ReportSection("summary");
+	private FailNotificationSection getSummary(Throwable t, HttpServletRequest request) {
+		FailNotificationSection summary = new FailNotificationSection("summary");
 		summary.addField(constructField("type", t.getClass().getCanonicalName(), "use_in_checksum", "true"));
 		summary.addField(constructField("message", t.getMessage()));
 		summary.addField(constructField("request_url", request.getRequestURL().toString()));
 		return summary;
 	}
 
-	private ReportSection getDetails(Throwable t) {
-		ReportSection details = new ReportSection("details");
+	private FailNotificationSection getDetails(Throwable t) {
+		FailNotificationSection details = new FailNotificationSection("details");
 		details.addField(constructField("stacktrace", getStackTraceString(t)));
 		return details;
 	}
 
-	private ReportSection getRequestInfo(HttpServletRequest request) {
-		ReportSection requestInfo = new ReportSection("request");
+	private FailNotificationSection getRequestInfo(HttpServletRequest request) {
+		FailNotificationSection requestInfo = new FailNotificationSection("request");
 		requestInfo.addField(constructField("url", request.getRequestURL().toString()));
 		requestInfo.addField(constructField("remote_address", request.getRemoteAddr()));
 		for (String header : stringList(request.getHeaderNames())) {
@@ -71,8 +71,8 @@ public class ClientFilter implements Filter {
 		return requestInfo;
 	}
 	
-	private ReportSection getSessionInfo(HttpServletRequest request) {
-		ReportSection session = new ReportSection("session");
+	private FailNotificationSection getSessionInfo(HttpServletRequest request) {
+		FailNotificationSection session = new FailNotificationSection("session");
 		if (request.getSession(false) != null) {
 			for (String key : stringList(request.getSession().getAttributeNames())) {
 				Object value = request.getSession().getAttribute(key);
@@ -82,8 +82,8 @@ public class ClientFilter implements Filter {
 		return session;
 	}	
 
-	private ReportField constructField(String name, String value, String... options) {
-		ReportField field = new ReportField(name, value);
+	private FailNotificationField constructField(String name, String value, String... options) {
+		FailNotificationField field = new FailNotificationField(name, value);
 		for (int i=0 ; i<options.length ; i += 2) {
 			field.setOption(options[i], options[i+1]);
 		}		
@@ -113,7 +113,7 @@ public class ClientFilter implements Filter {
 			serverAddress += "/";
 		}
 		
-		this.sender = new ReportSender(serverAddress + "api/projects/" + apiKey + "/fails");
+		this.sender = new FailNotificationSender(serverAddress + "api/projects/" + apiKey + "/fails");
 	}
 
 	public void destroy() {		
