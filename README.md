@@ -57,8 +57,8 @@ Notice that the position of the filter-mapping element affects which exceptions 
 
 failurous-java can be used to send custom notifications to Failurous. This can be accomplished by building an instance of `Fail` and sending it with the `FailSender` API:
 
-FailSender sender = FailSenderFactory.getSender();
-sender.send(new Fail("50 invalid login attempts by "+loginName, "LoginService.login()"));
+    FailSender sender = FailSenderFactory.getSender();
+    sender.send(new Fail("50 invalid login attempts by "+loginName, "LoginService.login()"));
 
 ## Support & Bug Reports
 
