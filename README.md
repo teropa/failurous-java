@@ -4,11 +4,11 @@ This is the Java client for the [Failurous](http://github.com/mnylen/failurous) 
 
 ## Installation
 
-To integrate Failurous to a Java webapp, first add the Failurous Maven repository to your Maven POM:
+To integrate Failurous to a Java webapp, first add the Sonatype Nexus repository to your POM and/or Maven settings:
 
     <repository>
-      <id>failurous</id>
-      <url>http://failurous.r10.railsrumble.com/mvnrepo</url>
+      <id>sonatype-nexus</id>
+      <url>https://oss.sonatype.org/content/groups/public</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
