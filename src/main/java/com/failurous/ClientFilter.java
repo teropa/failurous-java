@@ -1,7 +1,6 @@
 package com.failurous;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
@@ -15,19 +14,17 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ClientFilter implements Filter {
 	
-	private final HttpClient httpClient = new HttpClient(new MultiThreadedHttpConnectionManager());
+	private final HttpClient httpClient = new DefaultHttpClient();
 	private String endpointUrl;
 	
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -46,19 +43,15 @@ public class ClientFilter implements Filter {
 	}
 	
 	private void sendReport(Throwable t, ServletRequest request) {
-		OutputStream out = null;
-		PostMethod post = null;
 		try {
-			post = new PostMethod(endpointUrl);
+			HttpPost post = new HttpPost(endpointUrl);
 			String report = constructReport(t, (HttpServletRequest)request);
-			RequestEntity entity = new StringRequestEntity(report, "application/json", "UTF-8");
-			post.setRequestEntity(entity);
-			httpClient.executeMethod(post);
+			StringEntity entity = new StringEntity(report);
+			entity.setContentType("application/json");
+			post.setEntity(entity);
+			httpClient.execute(post);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
-		} finally {
-			post.releaseConnection();
-			safeClose(out);
 		}
 	}
 
@@ -165,14 +158,6 @@ public class ClientFilter implements Filter {
 		}
 		
 		this.endpointUrl = serverAddress + "api/projects/" + apiKey + "/fails";
-	}
-
-	private void safeClose(OutputStream out) {
-		if (out == null) return;
-		try {
-			out.close();
-		} catch (IOException ioe) {
-		}
 	}
 
 	public void destroy() {		
