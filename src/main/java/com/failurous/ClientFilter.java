@@ -14,18 +14,13 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ClientFilter implements Filter {
 	
-	private final HttpClient httpClient = new DefaultHttpClient();
-	private String endpointUrl;
+	private ReportSender sender;
 	
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 		try {
@@ -43,16 +38,7 @@ public class ClientFilter implements Filter {
 	}
 	
 	private void sendReport(Throwable t, ServletRequest request) {
-		try {
-			HttpPost post = new HttpPost(endpointUrl);
-			String report = constructReport(t, (HttpServletRequest)request);
-			StringEntity entity = new StringEntity(report);
-			entity.setContentType("application/json");
-			post.setEntity(entity);
-			httpClient.execute(post);
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
+		sender.sendReport(constructReport(t, (HttpServletRequest)request));
 	}
 
 	private String constructReport(Throwable t, HttpServletRequest request) {
@@ -157,7 +143,7 @@ public class ClientFilter implements Filter {
 			serverAddress += "/";
 		}
 		
-		this.endpointUrl = serverAddress + "api/projects/" + apiKey + "/fails";
+		this.sender = new ReportSender(serverAddress + "api/projects/" + apiKey + "/fails");
 	}
 
 	public void destroy() {		
