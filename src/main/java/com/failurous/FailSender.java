@@ -16,14 +16,25 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.map.ObjectMapper;
 
-public class FailNotificationSender {
+public class FailSender {
 
 	private final BlockingQueue<FailNotification> failQueue = new LinkedBlockingQueue<FailNotification>();
 	private final ObjectMapper failMapper = new ObjectMapper();
 	private final Executor senderExecutor = Executors.newFixedThreadPool(1, new DaemonThreadFactory());
 	
-	public FailNotificationSender(String endpointUrl) {
-		senderExecutor.execute(new Sender(endpointUrl));
+	public FailSender(String serverAddress, String apiKey) {
+		serverAddress = normalizeServerAddress(serverAddress);
+		senderExecutor.execute(new Sender(serverAddress + "api/projects/" + apiKey + "/fails"));
+	}
+
+	private String normalizeServerAddress(String serverAddress) {
+		if (!serverAddress.startsWith("http")) {
+			serverAddress = "http://" + serverAddress;
+		}
+		if (!serverAddress.endsWith("/")) {
+			serverAddress += "/";
+		}
+		return serverAddress;
 	}
 	
 	public void sendReport(FailNotification fail) {

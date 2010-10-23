@@ -17,7 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 
 public class ClientFilter implements Filter {
 	
-	private FailNotificationSender sender;
+	private String serverAddress;
+	private String apiKey;
 	
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 		try {
@@ -35,6 +36,7 @@ public class ClientFilter implements Filter {
 	}
 	
 	private void sendReport(Throwable t, ServletRequest request) {
+		FailSender sender = FailSenderFactory.getSender(serverAddress, apiKey);
 		sender.sendReport(constructReport(t, (HttpServletRequest)request));
 	}
 
@@ -103,17 +105,8 @@ public class ClientFilter implements Filter {
 	}
 
 	public void init(FilterConfig cfg) throws ServletException {
-		String serverAddress = cfg.getInitParameter("serverAddress");
-		String apiKey = cfg.getInitParameter("apiKey");
-		
-		if (!serverAddress.startsWith("http")) {
-			serverAddress = "http://" + serverAddress;
-		}
-		if (!serverAddress.endsWith("/")) {
-			serverAddress += "/";
-		}
-		
-		this.sender = new FailNotificationSender(serverAddress + "api/projects/" + apiKey + "/fails");
+		this.serverAddress = cfg.getInitParameter("serverAddress");
+		this.apiKey = cfg.getInitParameter("apiKey");
 	}
 
 	public void destroy() {		
