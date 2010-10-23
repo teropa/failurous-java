@@ -17,9 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 
 public class ClientFilter implements Filter {
 	
-	private String serverAddress;
-	private String apiKey;
-	
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 		try {
 			chain.doFilter(req, res);
@@ -36,7 +33,7 @@ public class ClientFilter implements Filter {
 	}
 	
 	private void sendReport(Throwable t, ServletRequest request) {
-		FailSender sender = FailSenderFactory.getSender(serverAddress, apiKey);
+		FailSender sender = FailSenderFactory.getSender();
 		sender.sendReport(constructReport(t, (HttpServletRequest)request));
 	}
 
@@ -105,8 +102,6 @@ public class ClientFilter implements Filter {
 	}
 
 	public void init(FilterConfig cfg) throws ServletException {
-		this.serverAddress = cfg.getInitParameter("serverAddress");
-		this.apiKey = cfg.getInitParameter("apiKey");
 	}
 
 	public void destroy() {		

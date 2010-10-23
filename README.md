@@ -4,6 +4,8 @@ This is the Java client for the [Failurous](http://github.com/mnylen/failurous) 
 
 ## Installation
 
+### 1. Configure pom.xml
+
 To integrate Failurous to a Java webapp, first add the Sonatype Nexus repository to your POM and/or Maven settings:
 
     <repository>
@@ -25,19 +27,21 @@ Next, add a dependency to the Failurous Java client:
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
 		
+### 2. Configure Failurous
+
+Add a file called `failurous.properties` to the root of your classpath (in Maven projects this is usually `src/main/resources`),
+and set its contents to:
+
+    serverAddress = <YOUR-FAILUROUS-INSTALLATION>
+    apiKey = <API-FAILUROUS-PROJECT-API-KEY>
+    
+### 3. Catching exceptions occurring in web requests
+    
 Finally, configure the Failurous Java client to intercept exceptions by adding it as a servlet filter to your web.xml:
 
 	<filter>
 		<filter-name>failurous</filter-name>
 		<filter-class>com.failurous.ClientFilter</filter-class>
-		<init-param>
-			<param-name>serverAddress</param-name>
-			<param-value><FAILUROUS-INSTALLATION></param-value>
-		</init-param>
-		<init-param>
-			<param-name>apiKey</param-name>
-			<param-value><API-KEY-FOR-PROJECT></param-value>
-		</init-param>
 	</filter>
 	
 	<filter-mapping>

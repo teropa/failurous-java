@@ -20,7 +20,7 @@ public class FailSender {
 
 	private final BlockingQueue<FailNotification> failQueue = new LinkedBlockingQueue<FailNotification>();
 	private final ObjectMapper failMapper = new ObjectMapper();
-	private final Executor senderExecutor = Executors.newFixedThreadPool(1, new DaemonThreadFactory());
+	private final Executor senderExecutor = Executors.newSingleThreadExecutor(new DaemonThreadFactory());
 	
 	public FailSender(String serverAddress, String apiKey) {
 		serverAddress = normalizeServerAddress(serverAddress);
