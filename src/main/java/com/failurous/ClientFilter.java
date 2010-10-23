@@ -39,13 +39,11 @@ public class ClientFilter implements Filter {
 	}
 
 	private Report constructReport(Throwable t, HttpServletRequest request) {
-		Report report = new Report();
-		report.title = t.getMessage();
-		report.location = t.getStackTrace()[0].toString();
-		report.data.add(getSummary(t, request));
-		report.data.add(getDetails(t));
-		report.data.add(getRequestInfo(request));
-		report.data.add(getSessionInfo(request));
+		Report report = new Report(t.getMessage(), t.getStackTrace()[0].toString());
+		report.addSection(getSummary(t, request));
+		report.addSection(getDetails(t));
+		report.addSection(getRequestInfo(request));
+		report.addSection(getSessionInfo(request));
 		return report;
 	}
 
@@ -67,8 +65,7 @@ public class ClientFilter implements Filter {
 		ReportSection requestInfo = new ReportSection("request");
 		requestInfo.addField(constructField("url", request.getRequestURL().toString()));
 		requestInfo.addField(constructField("remote_address", request.getRemoteAddr()));
-		List<String> headers = stringList(request.getHeaderNames());
-		for (String header : headers) {
+		for (String header : stringList(request.getHeaderNames())) {
 			requestInfo.addField(constructField(header, request.getHeader(header)));	
 		}
 		return requestInfo;
@@ -77,8 +74,7 @@ public class ClientFilter implements Filter {
 	private ReportSection getSessionInfo(HttpServletRequest request) {
 		ReportSection session = new ReportSection("session");
 		if (request.getSession(false) != null) {
-			List<String> keys = stringList(request.getSession().getAttributeNames());
-			for (String key : keys) {
+			for (String key : stringList(request.getSession().getAttributeNames())) {
 				Object value = request.getSession().getAttribute(key);
 				session.addField(constructField(key, value.toString()));
 			}

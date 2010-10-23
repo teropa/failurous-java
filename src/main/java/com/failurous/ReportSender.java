@@ -7,6 +7,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -19,7 +20,7 @@ public class ReportSender {
 
 	private final BlockingQueue<Report> reportQueue = new LinkedBlockingQueue<Report>();
 	private final ObjectMapper reportMapper = new ObjectMapper();
-	private final Executor senderExecutor = Executors.newFixedThreadPool(1);
+	private final Executor senderExecutor = Executors.newFixedThreadPool(1, new DaemonThreadFactory());
 	
 	public ReportSender(String endpointUrl) {
 		senderExecutor.execute(new Sender(endpointUrl));
@@ -74,4 +75,12 @@ public class ReportSender {
 		
 	}
 	
+	private class DaemonThreadFactory implements ThreadFactory {
+		public Thread newThread(Runnable r) {
+			Thread thread = new Thread(r);
+			thread.setDaemon(true);
+			return thread;
+		}
+	}
+
 }

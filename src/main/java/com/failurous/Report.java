@@ -5,7 +5,30 @@ import java.util.List;
 
 public class Report {
 
-	public String title;
-	public String location;
-	public List<ReportSection> data = new ArrayList<ReportSection>();
+	private String title;
+	private String location;
+	private List<ReportSection> data = new ArrayList<ReportSection>();
+
+	public Report(String title, String location) {
+		this.title = title;
+		this.location = location;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public List<ReportSection> getData() {
+		return data;
+	}
+
+
+	public void addSection(ReportSection section) {
+		data.add(section);
+	}
+	
 }
