@@ -1,6 +1,8 @@
 package com.failurous;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -43,8 +45,10 @@ public class ReportSender {
 		public void run() {
 			while (true) {
 				try {
-					Report nextReport = reportQueue.take();
-					send(nextReport);
+					List<Report> batch = new ArrayList<Report>();
+					batch.add(reportQueue.take());
+					reportQueue.drainTo(batch);
+					send(batch);
 				} catch (InterruptedException ie) {
 				} catch (Throwable t) {
 					t.printStackTrace();
@@ -52,9 +56,9 @@ public class ReportSender {
 			}
 		}
 		
-		private void send(Report report) {
+		private void send(List<Report> reports) {
 			try {
-				String serialized = reportMapper.writeValueAsString(report);
+				String serialized = reportMapper.writeValueAsString(reports);
 				StringEntity entity = new StringEntity(serialized);
 				entity.setContentType("application/json");
 				
