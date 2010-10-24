@@ -4,6 +4,9 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+
 import com.failurous.FailSender;
 import com.failurous.FailSenderFactory;
 import com.failurous.fail.ExceptionDuringWebRequestFail;
@@ -85,6 +88,16 @@ public class FailurousRemoteLoggingServiceImpl extends RemoteServiceServlet impl
 			deobfuscator = new StackTraceDeobfuscator(symbolMapsDir);
 		} else {
 			deobfuscator.setSymbolMapsDirectory(symbolMapsDir);
+		}
+	}
+	
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		String symbolMapsDir = config.getInitParameter("symbolMapsDirectory");
+		if (symbolMapsDir != null) {
+			symbolMapsDir = config.getServletContext().getRealPath(symbolMapsDir);
+			setSymbolMapsDirectory(symbolMapsDir);
 		}
 	}
 

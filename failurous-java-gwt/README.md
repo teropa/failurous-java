@@ -58,3 +58,86 @@ of level WARNING or SEVERE will be reported to Failurous:
       myLogger.log(Level.SEVERE, "Something bad happened while doing stuff", e);
     }
     
+### Reporting Uncaught Exceptions
+
+You can also enable reporting for uncaught exceptions (i.e. exceptions that would otherwise
+cause JavaScript errors for users at runtime), by installing a GWT uncaught exception handler
+when your module loads:
+
+public class MyApplication implements EntryPoint {
+
+  private static final Logger LOGGER = Logger.getLogger("MyApplication");
+  
+  public void onModuleLoad() {
+    GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
+      public void onUncaughtException(Throwable t) {
+        LOGGER.log(Level.SEVERE, "Uncaught exception", t);
+      }
+    });
+    DeferredCommand.addCommand(new Command() {
+      public void execute() {
+        continueModuleLoad();			
+      }
+    });
+  }
+
+  private void continueModuleLoad() {
+    // Normal application initialization code
+  }
+
+}
+ 
+Note that when exceptions are caught this way, they do not escape out of the GWT application,
+and thus you can't debug them with normal JavaScript debuggers. You may want to consider
+rethrowing the exceptions from `onUncaughtException()` to get around this.
+
+### Deobfuscating stack traces
+
+In the typical GWT setup the production code is obfuscated, and thus does not give very
+useful stack traces. However, GWT does provide a [mechanism for deobfuscating stack traces](http://google-web-toolkit.googlecode.com/svn/javadoc/2.1/com/google/gwt/logging/server/StackTraceDeobfuscator.html).
+By using this mechanism we can both have our production code obfuscated, and get Failurous
+to show human-readable stack traces.
+
+There's a couple of things we need to do to enable this feature:
+
+#### 1. Invoke the GWT compiler with `-extra`
+
+Add the `-extra` argument to the GWT compiler, and set it to point to a directory that's
+accessible by the server at runtime (a good candidate would be `WEB-INF/gwt-extra`). If
+you're using the [GWT Maven plugin](http://mojo.codehaus.org/gwt-maven-plugin/),
+here's one way to do it:
+
+    <plugin>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>gwt-maven-plugin</artifactId>
+      <executions>
+        <execution>
+          <configuration>
+            <module>com.mycompany.MyApplication</module>
+            <extra>${project.build.directory}/${project.build.finalName}/WEB-INF/gwt-extra</extra>
+          </configuration>
+          <goals>
+            <goal>compile</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+
+With the above configuration, GWT will produce the symbol maps we need to the directory
+`target/myapplication-myversion/WEB-INF/gwt-extra/myApplication/symbolMaps`.
+
+#### 2. Point the Failurous remote exception logger to the GWT symbol maps
+
+In `web.xml`, add a servlet init parameter to `FailurousRemoteLoggingServiceImpl`, which
+points to the `symbolMaps` directory under the directory we configured above:
+
+    <servlet>
+      <servlet-name>remoteLogger</servlet-name>
+      <servlet-class>com.failurous.gwt.server.FailurousRemoteLoggingServiceImpl</servlet-class>
+      <init-param>
+        <param-name>symbolMapsDirectory</param-name>
+        <param-value>WEB-INF/gwt-extra/myApplication/symbolMaps</param-value>
+      </init-param>
+    </servlet>
+
+Substitute `myApplication` above with the name of your GWT compilation unit.
