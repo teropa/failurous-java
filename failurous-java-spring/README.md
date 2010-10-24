@@ -51,7 +51,7 @@ from all methods annotated with `@ReportExceptions`:
       throw new IllegalArgumentException("This will be sent to Failurous");
     }
 
-Unless you're using classpath scanning as describe above, you'll need to let Spring know about the
+Unless you're using classpath scanning as described above, you'll need to let Spring know about the
 bean in your XML configuration:
 
     <bean id="exceptionReportInterceptor" class="com.failurous.spring.aop.ExceptionReportInterceptor"/>

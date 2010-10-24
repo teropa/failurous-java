@@ -18,6 +18,7 @@
 	  <module>failurous-java-core</module>
 	  <module>failurous-java-guice</module>
 	  <module>failurous-java-spring</module>
+	  <module>failurous-java-gwt</module>
 	</modules>
 
 	<scm>
