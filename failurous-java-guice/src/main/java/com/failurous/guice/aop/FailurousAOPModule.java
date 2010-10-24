@@ -9,7 +9,7 @@ public class FailurousAOPModule extends AbstractModule {
 	protected void configure() {
 		FailReportInterceptor reportInterceptor = new FailReportInterceptor();
 		requestInjection(reportInterceptor);
-		bindInterceptor(Matchers.any(), Matchers.annotatedWith(ReportFails.class), reportInterceptor);
+		bindInterceptor(Matchers.any(), Matchers.annotatedWith(ReportExceptions.class), reportInterceptor);
 	}
 
 }

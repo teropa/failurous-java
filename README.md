@@ -4,6 +4,8 @@ This is the Java client for the [Failurous](http://github.com/mnylen/failurous) 
 
 ## Installation
 
+Note: If you're using Guice, also see the Integrations section below.
+
 ### 1. Configure pom.xml
 
 To integrate Failurous to a Java webapp, first add the Sonatype Nexus repository to your POM and/or Maven settings:
@@ -24,7 +26,7 @@ Next, add a dependency to the Failurous Java client:
     <dependency>
       <groupId>com.failurous</groupId>
       <artifactId>failurous-java</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>0.1-SNAPSHOT</version>
     </dependency>
 		
 ### 2. Configure Failurous
@@ -35,7 +37,7 @@ and set its contents to:
     serverAddress = <YOUR-FAILUROUS-INSTALLATION>
     apiKey = <API-FAILUROUS-PROJECT-API-KEY>
     
-## Catching exceptions occurring in web requests
+## Reporting exceptions occurring in web requests
     
 Configure the Failurous Java client to intercept exceptions by adding it as a servlet filter to your web.xml:
 
@@ -53,6 +55,19 @@ The filter will catch any exceptions your app threw and deliver them to the Fail
 
 Notice that the position of the filter-mapping element affects which exceptions Failurous will report. Any filter mappings appearing before the failurous filter mapping in web.xml will not be reported, since they are executed outside its scope.
 
+## Reporting exceptions occurring elsewhere
+
+To send exceptions occurring outside the request/response cycle, `FailSender` can be invoked directly.
+The `ExceptionFail` convenience class can be used to include the usual exception information (stack trace, etc.)
+in the report without having to configure anything:
+
+    try {
+      myFailingMethod();
+    } catch (MyException e) {
+      FailSenderFactory.getSender().send(new ExceptionFail(e));
+      throw e;
+    }
+       
 ## Sending custom notifications
 
 failurous-java can be used to send custom notifications to Failurous. This can be accomplished by building an instance of `Fail` and sending it with the `FailSender` API:

@@ -44,7 +44,7 @@ public class FailReportInterceptorTest {
 	
 	public static class HopelessService {
 	
-		@ReportFails
+		@ReportExceptions
 		public void failingMethod() {
 			throw new IllegalStateException("oh noes");
 		}
