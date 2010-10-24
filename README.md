@@ -37,11 +37,11 @@ and set its contents to:
     
 ## Catching exceptions occurring in web requests
     
-Finally, configure the Failurous Java client to intercept exceptions by adding it as a servlet filter to your web.xml:
+Configure the Failurous Java client to intercept exceptions by adding it as a servlet filter to your web.xml:
 
 	<filter>
 		<filter-name>failurous</filter-name>
-		<filter-class>com.failurous.ClientFilter</filter-class>
+		<filter-class>com.failurous.FailurousServletFilter</filter-class>
 	</filter>
 	
 	<filter-mapping>
@@ -49,7 +49,7 @@ Finally, configure the Failurous Java client to intercept exceptions by adding i
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 		
-The filter will automatically catch any exceptions your app threw and deliver them to the Failurous service for later viewing.
+The filter will catch any exceptions your app threw and deliver them to the Failurous service for later viewing.
 
 Notice that the position of the filter-mapping element affects which exceptions Failurous will report. Any filter mappings appearing before the failurous filter mapping in web.xml will not be reported, since they are executed outside its scope.
 

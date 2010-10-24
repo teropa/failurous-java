@@ -16,22 +16,6 @@ public class FailurousModuleTest {
 	@Inject
 	private FailSender sender;
 	
-	private class AnnotatedConfigModule extends AbstractModule {
-		@Override
-		protected void configure() {
-			bindConstant().annotatedWith(FailurousServerAddress.class).to("http://localhost:3001/");
-			bindConstant().annotatedWith(FailurousAPIKey.class).to("annotated api key");
-		}
-	}
-
-	private class AnnotatedAPIKeyConfigModule extends AbstractModule {
-		@Override
-		protected void configure() {
-			bindConstant().annotatedWith(FailurousAPIKey.class).to("annotated api key");
-		}
-	}
-
-	
 	@Test
 	public void shouldInjectSenderWithAnnotatedConfig() {
 		Injector injector = Guice.createInjector(new FailurousModule(), new AnnotatedConfigModule());
@@ -42,7 +26,7 @@ public class FailurousModuleTest {
 	}
 	
 	@Test
-	public void shouldInjectSenderWithoutAnnotatedConfig() {
+	public void shouldInjectSenderWithFileBasedConfig() {
 		Injector injector = Guice.createInjector(new FailurousModule());
 		injector.injectMembers(this);
 		assertNotNull(sender);
@@ -58,5 +42,21 @@ public class FailurousModuleTest {
 		assertEquals("http://localhost:3000/", sender.getServerAddress());
 		assertEquals("annotated api key", sender.getAPIKey());
 	}
+	
+	private class AnnotatedConfigModule extends AbstractModule {
+		@Override
+		protected void configure() {
+			bindConstant().annotatedWith(FailurousServerAddress.class).to("http://localhost:3001/");
+			bindConstant().annotatedWith(FailurousAPIKey.class).to("annotated api key");
+		}
+	}
+
+	private class AnnotatedAPIKeyConfigModule extends AbstractModule {
+		@Override
+		protected void configure() {
+			bindConstant().annotatedWith(FailurousAPIKey.class).to("annotated api key");
+		}
+	}
+
 	
 }
