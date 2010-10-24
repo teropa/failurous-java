@@ -25,7 +25,9 @@ public class FailSenderProvider implements Provider<FailSender> {
 
 	public FailSender get() {
 		ensureConfig();
-		return new FailSender(serverAddress, apiKey);
+		FailSender sender = new FailSender();
+		sender.init(serverAddress, apiKey);
+		return sender;
 	}
 
 	private void ensureConfig() {
@@ -34,9 +36,9 @@ public class FailSenderProvider implements Provider<FailSender> {
 		try {
 			Properties config = FailurousConfig.load();
 			if (this.serverAddress == null)
-				this.serverAddress = config.getProperty("serverAddress");
+				this.serverAddress = config.getProperty("failurous.server.address");
 			if (this.apiKey == null) {
-				this.apiKey = config.getProperty("apiKey");
+				this.apiKey = config.getProperty("failurous.api.key");
 			}
 		} catch (FailurousConfigException f) {
 			throw new FailurousConfigException("Could not configure failurous. "+

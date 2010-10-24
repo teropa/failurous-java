@@ -28,10 +28,10 @@ public class FailSender {
 	private final ObjectMapper failMapper = new ObjectMapper();
 	private final ExecutorService senderExecutor = Executors.newSingleThreadExecutor(new DaemonThreadFactory());
 	
-	private final String serverAddress;
-	private final String apiKey;
+	private String serverAddress;
+	private String apiKey;
 	
-	public FailSender(String serverAddress, String apiKey) {
+	public void init(String serverAddress, String apiKey) {
 		this.serverAddress = normalizeServerAddress(serverAddress);
 		this.apiKey = apiKey;
 		senderExecutor.execute(makeSender());

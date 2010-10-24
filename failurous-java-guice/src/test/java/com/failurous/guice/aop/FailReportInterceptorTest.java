@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.failurous.FailSender;
+import com.failurous.aop.ReportExceptions;
 import com.failurous.fail.Fail;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;

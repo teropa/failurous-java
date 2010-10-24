@@ -13,7 +13,8 @@ public class FailSenderFactory {
 			synchronized(FailSender.class) {
 				if (sender == null) {
 					Properties config = FailurousConfig.load();
-					sender = new FailSender(config.getProperty("serverAddress"), config.getProperty("apiKey"));
+					sender = new FailSender();
+					sender.init(config.getProperty("failurous.server.address"), config.getProperty("failurous.api.key"));
 				}
 			}
 		}

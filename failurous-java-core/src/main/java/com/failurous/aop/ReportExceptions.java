@@ -1,4 +1,4 @@
-package com.failurous.guice.aop;
+package com.failurous.aop;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -34,8 +34,8 @@ Next, add a dependency to the Failurous Java client:
 Add a file called `failurous.properties` to the root of your classpath (in Maven projects this is usually `src/main/resources`),
 and set its contents to:
 
-    serverAddress = <YOUR-FAILUROUS-INSTALLATION>
-    apiKey = <API-FAILUROUS-PROJECT-API-KEY>
+    failurous.server.address = <YOUR-FAILUROUS-INSTALLATION>
+    failurous.api.key = <API-FAILUROUS-PROJECT-API-KEY>
     
 ## Reporting exceptions occurring in web requests
     

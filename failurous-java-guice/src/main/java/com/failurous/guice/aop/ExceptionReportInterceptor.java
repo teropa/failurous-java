@@ -7,7 +7,7 @@ import com.failurous.FailSender;
 import com.failurous.fail.ExceptionFail;
 import com.google.inject.Inject;
 
-public class FailReportInterceptor implements MethodInterceptor {
+public class ExceptionReportInterceptor implements MethodInterceptor {
 	
 	private FailSender sender;
 	

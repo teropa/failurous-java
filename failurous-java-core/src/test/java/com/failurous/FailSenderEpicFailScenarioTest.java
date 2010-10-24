@@ -43,7 +43,8 @@ public class FailSenderEpicFailScenarioTest {
 	
 	@Test
 	public void shouldBeAbleToSendALargeNumberOfFailsAtATime() throws Exception {
-		FailSender sender = new FailSender("http://localhost:"+SERVERPORT, "whatever");
+		FailSender sender = new FailSender();
+		sender.init("http://localhost:"+SERVERPORT, "whatever");
 		sendFails(sender, N);
 		sender.shutdown(20000);
 		assertEquals(N, server.nReceived.get());
