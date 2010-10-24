@@ -64,28 +64,28 @@ You can also enable reporting for uncaught exceptions (i.e. exceptions that woul
 cause JavaScript errors for users at runtime), by installing a GWT uncaught exception handler
 when your module loads:
 
-public class MyApplication implements EntryPoint {
+    public class MyApplication implements EntryPoint {
 
-  private static final Logger LOGGER = Logger.getLogger("MyApplication");
+      private static final Logger LOGGER = Logger.getLogger("MyApplication");
   
-  public void onModuleLoad() {
-    GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
-      public void onUncaughtException(Throwable t) {
-        LOGGER.log(Level.SEVERE, "Uncaught exception", t);
+      public void onModuleLoad() {
+        GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
+          public void onUncaughtException(Throwable t) {
+            LOGGER.log(Level.SEVERE, "Uncaught exception", t);
+          }
+        });
+        DeferredCommand.addCommand(new Command() {
+          public void execute() {
+            continueModuleLoad();			
+          }
+        });
       }
-    });
-    DeferredCommand.addCommand(new Command() {
-      public void execute() {
-        continueModuleLoad();			
+
+      private void continueModuleLoad() {
+        // Normal application initialization code
       }
-    });
-  }
 
-  private void continueModuleLoad() {
-    // Normal application initialization code
-  }
-
-}
+    }
  
 Note that when exceptions are caught this way, they do not escape out of the GWT application,
 and thus you can't debug them with normal JavaScript debuggers. You may want to consider
