@@ -34,7 +34,7 @@ public class FailurousServletFilter implements Filter {
 	}
 
 	protected FailSender getSender() {
-		return FailSenderFactory.getSender();
+		return FailSenderSingleton.get();
 	}
 
 	public void init(FilterConfig cfg) throws ServletException {

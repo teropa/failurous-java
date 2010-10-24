@@ -8,7 +8,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
 import com.failurous.FailSender;
-import com.failurous.FailSenderFactory;
+import com.failurous.FailSenderSingleton;
 import com.failurous.fail.ExceptionDuringWebRequestFail;
 import com.failurous.fail.WebRequestFail;
 import com.google.gwt.logging.server.RemoteLoggingServiceImpl;
@@ -28,7 +28,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class FailurousRemoteLoggingServiceImpl extends RemoteServiceServlet implements RemoteLoggingService {
 	private static final long serialVersionUID = 1L;
 
-	private FailSender sender = FailSenderFactory.getSender();
+	private FailSender sender = FailSenderSingleton.get();
 
 	// No deobfuscator by default
 	private static StackTraceDeobfuscator deobfuscator = null;

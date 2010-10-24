@@ -64,7 +64,7 @@ in the report without having to configure anything:
     try {
       myFailingMethod();
     } catch (MyException e) {
-      FailSenderFactory.getSender().send(new ExceptionFail(e));
+      FailSenderSingleton.get().send(new ExceptionFail(e));
       throw e;
     }
        
@@ -72,7 +72,7 @@ in the report without having to configure anything:
 
 failurous-java can be used to send custom notifications to Failurous. This can be accomplished by building an instance of `Fail` and sending it with the `FailSender` API:
 
-    FailSender sender = FailSenderFactory.getSender();
+    FailSender sender = FailSenderSingleton.get();
     sender.send(new Fail("50 invalid login attempts by "+loginName, "LoginService.login()"));
 
 More information can be included by adding sections and fields:
@@ -82,7 +82,7 @@ More information can be included by adding sections and fields:
     FailSection summary = myFail.addSection("summary");
     summary.addField("user", loginName);
     
-    FailSenderFactory.getSender().send(myFail);
+    FailSenderSingleton.get().send(myFail);
     
 ## Integrations
 
