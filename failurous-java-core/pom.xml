@@ -10,7 +10,6 @@
 	
 	<groupId>com.failurous</groupId>
 	<artifactId>failurous-java-core</artifactId>
-	<version>0.1-SNAPSHOT</version>
 	<name>Failurous Java Client Core libs</name>
 	
 	<dependencies>

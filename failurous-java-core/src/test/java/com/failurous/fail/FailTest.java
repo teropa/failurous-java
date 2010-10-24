@@ -1,8 +1,11 @@
-package com.failurous;
+package com.failurous.fail;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import com.failurous.fail.Fail;
+import com.failurous.fail.FailSection;
 
 public class FailTest {
 

@@ -18,6 +18,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.failurous.fail.Fail;
+
 public class FailSender {
 
 	private static Fail SHUTDOWN = new Fail("__shutdown__");

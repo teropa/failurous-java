@@ -21,6 +21,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.failurous.fail.Fail;
+
 public class FailSenderEpicFailScenarioTest {
 
 	private static final int SERVERPORT = 8889;

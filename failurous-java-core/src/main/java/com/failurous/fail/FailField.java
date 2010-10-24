@@ -1,4 +1,4 @@
-package com.failurous;
+package com.failurous.fail;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

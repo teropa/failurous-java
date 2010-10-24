@@ -1,4 +1,4 @@
-package com.failurous;
+package com.failurous.fail;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
@@ -6,6 +6,8 @@ import static org.hamcrest.CoreMatchers.*;
 import java.util.Map;
 
 import org.junit.Test;
+
+import com.failurous.fail.FailField;
 
 
 public class FailFieldTest {
