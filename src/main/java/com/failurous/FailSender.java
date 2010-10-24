@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -18,9 +20,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class FailSender {
 
+	private static Fail SHUTDOWN = new Fail("__shutdown__");
+	
 	private final BlockingQueue<Fail> failQueue = new LinkedBlockingQueue<Fail>();
 	private final ObjectMapper failMapper = new ObjectMapper();
-	private final Executor senderExecutor = Executors.newSingleThreadExecutor(new DaemonThreadFactory());
+	private final ExecutorService senderExecutor = Executors.newSingleThreadExecutor(new DaemonThreadFactory());
 	
 	public FailSender(String serverAddress, String apiKey) {
 		serverAddress = normalizeServerAddress(serverAddress);
@@ -45,21 +49,33 @@ public class FailSender {
 		}
 	}
 	
+	public void shutdown(long timeout) throws InterruptedException {
+		send(SHUTDOWN);
+		senderExecutor.shutdown();
+		senderExecutor.awaitTermination(timeout, TimeUnit.MILLISECONDS);
+	}
+	
 	private class Sender implements Runnable {
 
 		private final HttpClient httpClient = new DefaultHttpClient();
 		private final String endpointUrl;
+		private final AtomicBoolean running = new AtomicBoolean(true);
 		
 		public Sender(String endpointUrl) {
 			this.endpointUrl = endpointUrl;
 		}
 		
 		public void run() {
-			while (true) {
+			while (running.get()) {
 				try {
 					List<Fail> batch = new ArrayList<Fail>();
 					batch.add(failQueue.take());
 					failQueue.drainTo(batch);
+					
+					if (batch.remove(SHUTDOWN)) {
+						running.set(false);
+					}
+					
 					send(batch);
 				} catch (InterruptedException ie) {
 				} catch (Throwable t) {
@@ -76,13 +92,13 @@ public class FailSender {
 				
 				HttpPost post = new HttpPost(endpointUrl);
 				post.setEntity(entity);
-				
 				HttpResponse resp = httpClient.execute(post);
 				resp.getEntity().consumeContent();
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 			}
 		}
+		
 		
 	}
 	

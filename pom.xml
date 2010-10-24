@@ -65,8 +65,14 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.8.2</version>
-			<scope>provided</scope>
+			<scope>test</scope>
 		</dependency>
+		<dependency>	
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>7.2.0.v20101020</version>
+			<scope>test</scope>
+		</dependency>		
 	</dependencies>
 
 </project>
