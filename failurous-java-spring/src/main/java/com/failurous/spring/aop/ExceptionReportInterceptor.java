@@ -9,7 +9,7 @@ import com.failurous.FailSender;
 import com.failurous.fail.ExceptionFail;
 
 @Aspect
-@Component
+@Component("exceptionReportInterceptor")
 public class ExceptionReportInterceptor {
 
 	private FailSender failSender;

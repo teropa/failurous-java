@@ -4,7 +4,7 @@ This is the Java client for the [Failurous](http://github.com/mnylen/failurous) 
 
 ## Installation
 
-Note: If you're using Guice, also see the Integrations section below.
+Note: If you're using Guice or Spring, also see the Integrations section below.
 
 ### 1. Configure pom.xml
 
@@ -87,6 +87,7 @@ More information can be included by adding sections and fields:
 ## Integrations
 
 * [Google Guice integration](http://github.com/teropa/failurous-java/tree/master/failurous-java-guice/)
+* [Spring integration](http://github.com/teropa/failurous-java/tree/master/failurous-java-spring/)
 
 ## Support & Bug Reports
 

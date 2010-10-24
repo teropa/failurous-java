@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ImportResource;
 
 import com.failurous.FailSender;
 
-@Configuration
+@Configuration("failurousConfiguration")
 @ImportResource("classpath:/failurous-properties-config.xml")
 public class FailurousConfiguration {
 
