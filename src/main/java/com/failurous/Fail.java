@@ -11,23 +11,41 @@ public class Fail {
 	private boolean useLocationInChecksum = true;
 	private List<FailSection> data = new ArrayList<FailSection>();
 
+	public Fail(String title) {
+		this.title = title;
+	}
+	
 	public Fail(String title, String location) {
 		this.title = title;
 		this.location = location;
 	}
 	
-	public void addSection(FailSection section) {
-		data.add(section);
-	}
-	
 	public String getTitle() {
 		return title;
+	}
+	
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public String getLocation() {
 		return location;
 	}
+	
+	public void setLocation(String location) {
+		this.location = location;
+	}
 
+	public void addSection(FailSection section) {
+		data.add(section);
+	}
+	
+	public FailSection addSection(String name) {
+		FailSection section = new FailSection(name);
+		addSection(section);
+		return section;
+	}
+	
 	public boolean isUseTitleInChecksum() {
 		return useTitleInChecksum;
 	}

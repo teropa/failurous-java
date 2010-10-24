@@ -48,24 +48,24 @@ public class ClientFilter implements Filter {
 
 	private FailSection getSummary(Throwable t, HttpServletRequest request) {
 		FailSection summary = new FailSection("summary");
-		summary.addField(constructField("type", t.getClass().getCanonicalName(), "use_in_checksum", "true"));
-		summary.addField(constructField("message", t.getMessage()));
-		summary.addField(constructField("request_url", request.getRequestURL().toString()));
+		summary.addField("type", t.getClass().getCanonicalName(), "use_in_checksum", "true");
+		summary.addField("message", t.getMessage());
+		summary.addField("request_url", request.getRequestURL().toString());
 		return summary;
 	}
 
 	private FailSection getDetails(Throwable t) {
 		FailSection details = new FailSection("details");
-		details.addField(constructField("stacktrace", getStackTraceString(t)));
+		details.addField("stacktrace", getStackTraceString(t));
 		return details;
 	}
 
 	private FailSection getRequestInfo(HttpServletRequest request) {
 		FailSection requestInfo = new FailSection("request");
-		requestInfo.addField(constructField("url", request.getRequestURL().toString()));
-		requestInfo.addField(constructField("remote_address", request.getRemoteAddr()));
+		requestInfo.addField("url", request.getRequestURL().toString());
+		requestInfo.addField("remote_address", request.getRemoteAddr());
 		for (String header : stringList(request.getHeaderNames())) {
-			requestInfo.addField(constructField(header, request.getHeader(header)));	
+			requestInfo.addField(header, request.getHeader(header));	
 		}
 		return requestInfo;
 	}
@@ -75,19 +75,11 @@ public class ClientFilter implements Filter {
 		if (request.getSession(false) != null) {
 			for (String key : stringList(request.getSession().getAttributeNames())) {
 				Object value = request.getSession().getAttribute(key);
-				session.addField(constructField(key, value.toString()));
+				session.addField(key, value.toString());
 			}
 		}
 		return session;
 	}	
-
-	private FailField constructField(String name, String value, String... options) {
-		FailField field = new FailField(name, value);
-		for (int i=0 ; i<options.length ; i += 2) {
-			field.setOption(options[i], options[i+1]);
-		}		
-		return field;
-	}
 	
 	private String getStackTraceString(Throwable t) {
 		StringWriter res = new StringWriter();

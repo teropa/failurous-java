@@ -60,9 +60,20 @@ failurous-java can be used to send custom notifications to Failurous. This can b
     FailSender sender = FailSenderFactory.getSender();
     sender.send(new Fail("50 invalid login attempts by "+loginName, "LoginService.login()"));
 
+More information can be included by adding sections and fields:
+
+    FailSender sender = FailSenderFactory.getSender();
+    
+    Fail myFail = new Fail("50 invalid login attempts", "LoginService.login()");
+    
+    FailSection summary = myFail.addSection("summary");
+    summary.addField("user", loginName);
+    
+    sender.send(myFail);
+    
 ## Support & Bug Reports
 
-#failurous at Freenode
+\#failurous at Freenode
 
 [Failurous-java Lighthouse](http://failurous.lighthouseapp.com/projects/62311-failurous-java)
 
