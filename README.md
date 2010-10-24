@@ -1,14 +1,15 @@
 # Failurous Java client
 
-This is the Java client for the [Failurous](http://github.com/mnylen/failurous) exception tracking application.
+Java client libraries for the [Failurous](http://failurous.r10.railsrumble.com/) exception tracking application.
 
 ## Installation
 
-Note: If you're using Guice, Spring, and/or GWT, also see the Integrations section below.
+_Note:_ If you're using Guice, Spring, and/or GWT, we have some extra goodies for you.
+See the *Integrations* section below.
 
 ### 1. Configure pom.xml
 
-To integrate Failurous to a Java webapp, first add the Sonatype Nexus repository to your POM and/or Maven settings:
+First, add the Sonatype Nexus repository to your POM:
 
     <repository>
       <id>sonatype-nexus</id>
@@ -31,15 +32,18 @@ Next, add a dependency to the Failurous Java client:
 		
 ### 2. Configure Failurous
 
-Add a file called `failurous.properties` to the root of your classpath (in Maven projects this is usually `src/main/resources`),
-and set its contents to:
+Add a file called `failurous.properties` to the root of your classpath. (In Maven projects this is usually `src/main/resources`.)
+Set its contents as follows:
 
     failurous.server.address = <YOUR-FAILUROUS-INSTALLATION>
     failurous.api.key = <API-FAILUROUS-PROJECT-API-KEY>
     
-## Reporting exceptions occurring in web requests
-    
-Configure the Failurous Java client to intercept exceptions by adding it as a servlet filter to your web.xml:
+You'll find your API key in the Failurous web application, by clicking the "API key & Settings" link on your project page.
+
+## Reporting the exceptions that users see 
+
+For many, the most important fails to know about are the ones users see. To report them,
+add the Failurous servlet filter to `web.xml`:   
 
 	<filter>
 		<filter-name>failurous</filter-name>
@@ -51,15 +55,21 @@ Configure the Failurous Java client to intercept exceptions by adding it as a se
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 		
-The filter will catch any exceptions your app threw and deliver them to the Failurous service for later viewing.
+The filter will catch any exceptions your app throws. It will deliver them to the Failurous
+server, where you can see them through the web interface.		
 
-Notice that the position of the filter-mapping element affects which exceptions Failurous will report. Any filter mappings appearing before the failurous filter mapping in web.xml will not be reported, since they are executed outside its scope.
+Notice that the position of the `filter-mapping` element affects which exceptions Failurous will report.
+If you have other filters, and they are defined before the failurous filter, any exceptions they cause
+will not be reported.
 
-## Reporting exceptions occurring elsewhere
+## Reporting exceptions thrown deep down in your app
 
-To send exceptions occurring outside the request/response cycle, `FailSender` can be invoked directly.
-The `ExceptionFail` convenience class can be used to include the usual exception information (stack trace, etc.)
-in the report without having to configure anything:
+You may also want to report exceptions that happen in lower levels of your applications - those
+that are not thrown in the user's face but you nevertheless want to know about.
+In these situations, you can invoke the `FailSenderSingleton` service directly.
+
+You can also use the `ExceptionFail` convenience class to include the usual exception
+information (stack trace, etc.):
 
     try {
       myFailingMethod();
@@ -70,7 +80,10 @@ in the report without having to configure anything:
        
 ## Sending custom notifications
 
-failurous-java can be used to send custom notifications to Failurous. This can be accomplished by building an instance of `Fail` and sending it with the `FailSender` API:
+You can also report custom notifications about anything you feel your app needs to let 
+you know about. 
+
+To do this, build an instance of `Fail` and send it with the `FailSenderSingleton` API:
 
     FailSender sender = FailSenderSingleton.get();
     sender.send(new Fail("50 invalid login attempts by "+loginName, "LoginService.login()"));
@@ -79,8 +92,8 @@ More information can be included by adding sections and fields:
 
     Fail myFail = new Fail("50 invalid login attempts", "LoginService.login()");
     
-    FailSection summary = myFail.addSection("summary");
-    summary.addField("user", loginName);
+    FailSection summary = myFail.addSection("Summary");
+    summary.addField("User", loginName);
     
     FailSenderSingleton.get().send(myFail);
     
