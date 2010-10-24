@@ -69,6 +69,10 @@ More information can be included by adding sections and fields:
     
     FailSenderFactory.getSender().send(myFail);
     
+## Integrations
+
+* [Google Guice integration](http://github.com/teropa/failurous-java/tree/master/failurous-java-guice/)
+
 ## Support & Bug Reports
 
 \#failurous at Freenode

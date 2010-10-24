@@ -26,11 +26,27 @@ public class FailSender {
 	private final ObjectMapper failMapper = new ObjectMapper();
 	private final ExecutorService senderExecutor = Executors.newSingleThreadExecutor(new DaemonThreadFactory());
 	
+	private final String serverAddress;
+	private final String apiKey;
+	
 	public FailSender(String serverAddress, String apiKey) {
-		serverAddress = normalizeServerAddress(serverAddress);
-		senderExecutor.execute(new Sender(serverAddress + "api/projects/" + apiKey + "/fails"));
+		this.serverAddress = normalizeServerAddress(serverAddress);
+		this.apiKey = apiKey;
+		senderExecutor.execute(makeSender());
 	}
 
+	private Sender makeSender() {
+		return new Sender(serverAddress + "api/projects/" + apiKey + "/fails");
+	}
+
+	public String getServerAddress() {
+		return serverAddress;
+	}
+
+	public String getAPIKey() {
+		return apiKey;
+	}
+	
 	private String normalizeServerAddress(String serverAddress) {
 		if (!serverAddress.startsWith("http")) {
 			serverAddress = "http://" + serverAddress;

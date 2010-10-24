@@ -1,8 +1,8 @@
 package com.failurous;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
+
+import com.failurous.config.FailurousConfig;
 
 public class FailSenderFactory {
 
@@ -12,7 +12,7 @@ public class FailSenderFactory {
 		if (sender == null) {
 			synchronized(FailSender.class) {
 				if (sender == null) {
-					Properties config = loadConfig();
+					Properties config = FailurousConfig.load();
 					sender = new FailSender(config.getProperty("serverAddress"), config.getProperty("apiKey"));
 				}
 			}
@@ -20,21 +20,4 @@ public class FailSenderFactory {
 		return sender;
 	}
 
-	private static Properties loadConfig() {
-		try {
-			Properties config = new Properties();
-			config.load(getConfigIn());
-			return config;
-		} catch (IOException ioe) {
-			throw new IllegalArgumentException("Could not load failurous.properties", ioe);
-		}
-	}
-
-	private static InputStream getConfigIn() {
-		InputStream configIn = FailSender.class.getResourceAsStream("/failurous.properties");
-		if (configIn == null) {
-			throw new IllegalArgumentException("failurous.properties not found in classpath");
-		}
-		return configIn;
-	}
 }
