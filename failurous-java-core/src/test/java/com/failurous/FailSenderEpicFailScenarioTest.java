@@ -26,11 +26,11 @@ public class FailSenderEpicFailScenarioTest {
 	private static final int SERVERPORT = 8889;
 	private static final int N = 1000000;
 	
-	private FailurousServer server;
+	private MockFailurousServer server;
 	
 	@Before
 	public void startServer() throws Exception {
-		server = new FailurousServer();
+		server = new MockFailurousServer();
 		server.start();
 	}
 	
@@ -64,12 +64,12 @@ public class FailSenderEpicFailScenarioTest {
 		};
 	}
 	
-	private class FailurousServer extends Server {
+	private class MockFailurousServer extends Server {
 		
 		private ObjectMapper mapper = new ObjectMapper();
 		AtomicInteger nReceived = new AtomicInteger(0);
 		
-		public FailurousServer() {
+		public MockFailurousServer() {
 			super(SERVERPORT);
 			super.setHandler(new AbstractHandler() {
 				public void handle(String target, Request req, HttpServletRequest httpReq, HttpServletResponse httpRes) throws IOException, ServletException {

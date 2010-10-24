@@ -11,12 +11,7 @@
 	<groupId>com.failurous</groupId>
 	<artifactId>failurous-java</artifactId>
 	<version>0.1-SNAPSHOT</version>
-        <packaging>pom</packaging>
-	<name>Failurous Java Client Libraries</name>
-
-	<modules>
-	  <module>failurous-java-core</module>
-        </modules>
+	<name>Failurous Java Client</name>
 
 	<scm>
 		<connection>scm:git:git://github.com/teropa/failurous-java.git</connection>
@@ -51,11 +46,33 @@
 	
 	<dependencies>
 		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.3</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.8.2</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>	
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>7.2.0.v20101020</version>
+			<scope>test</scope>
+		</dependency>		
 	</dependencies>
 
 </project>
