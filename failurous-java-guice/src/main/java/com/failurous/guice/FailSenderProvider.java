@@ -1,7 +1,5 @@
 package com.failurous.guice;
 
-import java.util.Properties;
-
 import com.failurous.FailSender;
 import com.failurous.config.FailurousConfig;
 import com.failurous.config.FailurousConfigException;
@@ -34,11 +32,11 @@ public class FailSenderProvider implements Provider<FailSender> {
 		if (this.serverAddress != null && this.apiKey != null) 
 			return;
 		try {
-			Properties config = FailurousConfig.load();
+			FailurousConfig config = FailurousConfig.load();
 			if (this.serverAddress == null)
-				this.serverAddress = config.getProperty("failurous.server.address");
+				this.serverAddress = config.getServerAddress();
 			if (this.apiKey == null) {
-				this.apiKey = config.getProperty("failurous.api.key");
+				this.apiKey = config.getAPIKey();
 			}
 		} catch (FailurousConfigException f) {
 			throw new FailurousConfigException("Could not configure failurous. "+

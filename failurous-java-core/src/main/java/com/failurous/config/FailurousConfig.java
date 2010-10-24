@@ -6,13 +6,20 @@ import java.util.Properties;
 
 import com.failurous.FailSender;
 
+/**
+ * Provides access to the `failurous.properties` file which is expected
+ * to be in the root directory of the classpath.
+ * 
+ * @author teroparv
+ *
+ */
 public class FailurousConfig {
 
-	public static Properties load() {
+	public static FailurousConfig load() {
 		try {
 			Properties config = new Properties();
 			config.load(getConfigIn());
-			return config;
+			return new FailurousConfig(config);
 		} catch (IOException ioe) {
 			throw new FailurousConfigException("Could not load failurous.properties", ioe);
 		}
@@ -26,4 +33,17 @@ public class FailurousConfig {
 		return configIn;
 	}
 
+	private final Properties store;
+	
+	private FailurousConfig(Properties store) {
+		this.store = store;
+	}
+	
+	public String getServerAddress() {
+		return store.getProperty("failurous.server.address");
+	}
+	
+	public String getAPIKey() {
+		return store.getProperty("failurous.api.key");
+	}
 }
