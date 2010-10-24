@@ -16,7 +16,8 @@
 
 	<modules>
 	  <module>failurous-java-core</module>
-        </modules>
+	  <module>failurous-java-guice</module>
+	</modules>
 
 	<scm>
 		<connection>scm:git:git://github.com/teropa/failurous-java.git</connection>
