@@ -61,19 +61,17 @@ of level WARNING or SEVERE will be reported to Failurous:
 ### Reporting Uncaught Exceptions
 
 You can also enable reporting for uncaught exceptions (i.e. exceptions that would otherwise
-cause JavaScript errors for users at runtime), by installing a GWT uncaught exception handler
-when your module loads:
+cause JavaScript errors for users at runtime), by installing the Failurous uncaught exception
+logger. First of all, make your app inherit the Failurous GWT module:
+
+    <inherits name='com.failurous.gwt.Failurous'/>
+    
+Second, install the logger when your app starts:
 
     public class MyApplication implements EntryPoint {
-
-      private static final Logger LOGGER = Logger.getLogger("MyApplication");
   
       public void onModuleLoad() {
-        GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
-          public void onUncaughtException(Throwable t) {
-            LOGGER.log(Level.SEVERE, "Uncaught exception", t);
-          }
-        });
+      	UncaughtExceptionLogger.install();
         DeferredCommand.addCommand(new Command() {
           public void execute() {
             continueModuleLoad();			
