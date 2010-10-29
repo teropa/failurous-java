@@ -19,9 +19,6 @@ Add the following dependency to your Maven project:
 Exceptions thrown in GWT applications running in users' web browsers can be reported to
 Failurous. For this, we use the new logging API in GWT 2.1.
 
-This feature is experimental, since GWT 2.1 itself is currently in the release candidate phase
-and the API may change.
-
 First, add the GWT logging module to your GWT application descriptor if you haven't already done so.
 Also enable the remote log handler, so that log messages are sent to the server:
 
